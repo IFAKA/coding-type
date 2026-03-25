@@ -4,7 +4,7 @@ package snippets
 type Snippet struct {
 	ID         string   `json:"id"`
 	Title      string   `json:"title"`
-	Language   string   `json:"language"`   // python, javascript, typescript, go, cpp
+	Language   string   `json:"language"`   // python, javascript, typescript, go, cpp, nextjs
 	Difficulty string   `json:"difficulty"` // easy, medium, hard
 	Tags       []string `json:"tags"`
 	Code       string   `json:"code"`
@@ -18,7 +18,7 @@ type Config struct {
 }
 
 // Languages is the ordered list of supported languages.
-var Languages = []string{"python", "javascript", "typescript", "go", "cpp"}
+var Languages = []string{"python", "javascript", "typescript", "go", "cpp", "nextjs"}
 
 // Difficulties is the ordered list of difficulty levels.
 var Difficulties = []string{"easy", "medium", "hard"}
@@ -33,6 +33,7 @@ var LangDisplay = map[string]string{
 	"typescript": "typescript",
 	"go":         "go",
 	"cpp":        "c++",
+	"nextjs":     "next.js",
 }
 
 // ChromaLang maps snippet language IDs to chroma lexer names.
@@ -42,4 +43,5 @@ var ChromaLang = map[string]string{
 	"typescript": "typescript",
 	"go":         "go",
 	"cpp":        "c++",
+	"nextjs":     "typescript",
 }

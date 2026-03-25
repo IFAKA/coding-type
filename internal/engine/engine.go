@@ -46,6 +46,14 @@ func ProcessKey(s TypingState, key tea.KeyMsg) (TypingState, bool) {
 	}
 	s.Cursor++
 
+	// Auto-indent: after a correct newline, skip leading whitespace automatically
+	if typedRune == '\n' && typedRune == expected {
+		for s.Cursor < len(s.Target) && (s.Target[s.Cursor] == ' ' || s.Target[s.Cursor] == '\t') {
+			s.States[s.Cursor] = Correct
+			s.Cursor++
+		}
+	}
+
 	if s.Cursor >= len(s.Target) {
 		return finish(s), true
 	}

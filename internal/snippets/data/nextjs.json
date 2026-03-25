@@ -1,0 +1,122 @@
+[
+  {
+    "id": "nextjs-server-component",
+    "title": "Basic Server Component",
+    "language": "nextjs",
+    "difficulty": "easy",
+    "tags": ["server-component", "async"],
+    "code": "interface User {\n    id: number;\n    name: string;\n}\n\nasync function getUser(id: number): Promise<User> {\n    const res = await fetch(`https://api.example.com/users/${id}`);\n    if (!res.ok) throw new Error('Failed to fetch user');\n    return res.json();\n}\n\nexport default async function UserPage({ params }: { params: { id: string } }) {\n    const user = await getUser(Number(params.id));\n    return <h1>{user.name}</h1>;\n}"
+  },
+  {
+    "id": "nextjs-client-component",
+    "title": "Client Component with useState",
+    "language": "nextjs",
+    "difficulty": "easy",
+    "tags": ["client-component", "hooks"],
+    "code": "'use client';\n\nimport { useState } from 'react';\n\nexport default function Counter() {\n    const [count, setCount] = useState(0);\n\n    return (\n        <div>\n            <p>Count: {count}</p>\n            <button onClick={() => setCount(count + 1)}>Increment</button>\n            <button onClick={() => setCount(count - 1)}>Decrement</button>\n        </div>\n    );\n}"
+  },
+  {
+    "id": "nextjs-api-route",
+    "title": "App Router API Route",
+    "language": "nextjs",
+    "difficulty": "easy",
+    "tags": ["api-route", "route-handler"],
+    "code": "import { NextRequest, NextResponse } from 'next/server';\n\nexport async function GET(request: NextRequest) {\n    const { searchParams } = new URL(request.url);\n    const name = searchParams.get('name') ?? 'world';\n    return NextResponse.json({ message: `Hello, ${name}!` });\n}\n\nexport async function POST(request: NextRequest) {\n    const body = await request.json();\n    return NextResponse.json({ received: body }, { status: 201 });\n}"
+  },
+  {
+    "id": "nextjs-generate-static-params",
+    "title": "generateStaticParams",
+    "language": "nextjs",
+    "difficulty": "easy",
+    "tags": ["static-generation", "dynamic-routes"],
+    "code": "export async function generateStaticParams() {\n    const posts = await fetch('https://api.example.com/posts').then(r => r.json());\n    return posts.map((post: { id: number }) => ({ id: String(post.id) }));\n}\n\nexport default async function PostPage({ params }: { params: { id: string } }) {\n    const post = await fetch(`https://api.example.com/posts/${params.id}`).then(r => r.json());\n    return (\n        <article>\n            <h1>{post.title}</h1>\n            <p>{post.body}</p>\n        </article>\n    );\n}"
+  },
+  {
+    "id": "nextjs-layout",
+    "title": "Root Layout",
+    "language": "nextjs",
+    "difficulty": "easy",
+    "tags": ["layout", "metadata"],
+    "code": "import type { Metadata } from 'next';\n\nexport const metadata: Metadata = {\n    title: 'My App',\n    description: 'Built with Next.js',\n};\n\nexport default function RootLayout({ children }: { children: React.ReactNode }) {\n    return (\n        <html lang=\"en\">\n            <body>{children}</body>\n        </html>\n    );\n}"
+  },
+  {
+    "id": "nextjs-server-action",
+    "title": "Server Action (Form Mutation)",
+    "language": "nextjs",
+    "difficulty": "medium",
+    "tags": ["server-action", "form", "mutation"],
+    "code": "'use server';\n\nimport { revalidatePath } from 'next/cache';\nimport { redirect } from 'next/navigation';\n\nexport async function createPost(formData: FormData) {\n    const title = formData.get('title') as string;\n    const body = formData.get('body') as string;\n\n    if (!title || !body) throw new Error('Title and body are required');\n\n    await fetch('https://api.example.com/posts', {\n        method: 'POST',\n        headers: { 'Content-Type': 'application/json' },\n        body: JSON.stringify({ title, body }),\n    });\n\n    revalidatePath('/posts');\n    redirect('/posts');\n}"
+  },
+  {
+    "id": "nextjs-middleware",
+    "title": "Middleware with Auth Check",
+    "language": "nextjs",
+    "difficulty": "medium",
+    "tags": ["middleware", "auth"],
+    "code": "import { NextRequest, NextResponse } from 'next/server';\n\nexport function middleware(request: NextRequest) {\n    const token = request.cookies.get('token')?.value;\n    const isProtected = request.nextUrl.pathname.startsWith('/dashboard');\n\n    if (isProtected && !token) {\n        const loginUrl = new URL('/login', request.url);\n        loginUrl.searchParams.set('from', request.nextUrl.pathname);\n        return NextResponse.redirect(loginUrl);\n    }\n\n    return NextResponse.next();\n}\n\nexport const config = { matcher: ['/dashboard/:path*'] };"
+  },
+  {
+    "id": "nextjs-use-router",
+    "title": "useRouter + useSearchParams",
+    "language": "nextjs",
+    "difficulty": "medium",
+    "tags": ["client-component", "routing", "hooks"],
+    "code": "'use client';\n\nimport { useRouter, useSearchParams } from 'next/navigation';\nimport { useCallback } from 'react';\n\nexport default function SearchBar() {\n    const router = useRouter();\n    const searchParams = useSearchParams();\n\n    const updateQuery = useCallback((term: string) => {\n        const params = new URLSearchParams(searchParams.toString());\n        if (term) params.set('q', term);\n        else params.delete('q');\n        router.push(`?${params.toString()}`);\n    }, [router, searchParams]);\n\n    return (\n        <input\n            defaultValue={searchParams.get('q') ?? ''}\n            onChange={e => updateQuery(e.target.value)}\n            placeholder=\"Search...\"\n        />\n    );\n}"
+  },
+  {
+    "id": "nextjs-generate-metadata",
+    "title": "Dynamic generateMetadata",
+    "language": "nextjs",
+    "difficulty": "medium",
+    "tags": ["metadata", "seo", "dynamic"],
+    "code": "import type { Metadata } from 'next';\n\ninterface Props {\n    params: { slug: string };\n}\n\nexport async function generateMetadata({ params }: Props): Promise<Metadata> {\n    const post = await fetch(`https://api.example.com/posts/${params.slug}`).then(r => r.json());\n\n    return {\n        title: post.title,\n        description: post.excerpt,\n        openGraph: {\n            title: post.title,\n            description: post.excerpt,\n            images: [{ url: post.coverImage }],\n        },\n    };\n}\n\nexport default async function PostPage({ params }: Props) {\n    const post = await fetch(`https://api.example.com/posts/${params.slug}`).then(r => r.json());\n    return <article><h1>{post.title}</h1></article>;\n}"
+  },
+  {
+    "id": "nextjs-fetch-cache",
+    "title": "Fetch with Cache Strategies",
+    "language": "nextjs",
+    "difficulty": "medium",
+    "tags": ["fetch", "caching", "revalidate"],
+    "code": "// Static — cached indefinitely\nasync function getStaticData() {\n    return fetch('https://api.example.com/config', { cache: 'force-cache' }).then(r => r.json());\n}\n\n// Dynamic — never cached\nasync function getDynamicData() {\n    return fetch('https://api.example.com/live', { cache: 'no-store' }).then(r => r.json());\n}\n\n// ISR — revalidate every 60 seconds\nasync function getRevalidatedData() {\n    return fetch('https://api.example.com/posts', { next: { revalidate: 60 } }).then(r => r.json());\n}\n\nexport default async function Page() {\n    const [config, live, posts] = await Promise.all([\n        getStaticData(), getDynamicData(), getRevalidatedData(),\n    ]);\n    return <pre>{JSON.stringify({ config, live, posts }, null, 2)}</pre>;\n}"
+  },
+  {
+    "id": "nextjs-optimistic-update",
+    "title": "Optimistic Update with useOptimistic",
+    "language": "nextjs",
+    "difficulty": "hard",
+    "tags": ["client-component", "optimistic", "server-action"],
+    "code": "'use client';\n\nimport { useOptimistic, useTransition } from 'react';\nimport { toggleLike } from './actions';\n\ninterface Post { id: number; likes: number; liked: boolean; }\n\nexport default function LikeButton({ post }: { post: Post }) {\n    const [, startTransition] = useTransition();\n    const [optimisticPost, addOptimistic] = useOptimistic(\n        post,\n        (state, liked: boolean) => ({\n            ...state,\n            liked,\n            likes: liked ? state.likes + 1 : state.likes - 1,\n        })\n    );\n\n    function handleClick() {\n        startTransition(async () => {\n            addOptimistic(!optimisticPost.liked);\n            await toggleLike(post.id);\n        });\n    }\n\n    return (\n        <button onClick={handleClick}>\n            {optimisticPost.liked ? '♥' : '♡'} {optimisticPost.likes}\n        </button>\n    );\n}"
+  },
+  {
+    "id": "nextjs-suspense-streaming",
+    "title": "Streaming with Suspense",
+    "language": "nextjs",
+    "difficulty": "hard",
+    "tags": ["suspense", "streaming", "loading"],
+    "code": "import { Suspense } from 'react';\n\nasync function SlowComponent() {\n    await new Promise(r => setTimeout(r, 2000));\n    const data = await fetch('https://api.example.com/slow').then(r => r.json());\n    return <div>{data.message}</div>;\n}\n\nfunction Skeleton() {\n    return <div className=\"animate-pulse h-8 bg-gray-200 rounded\" />;\n}\n\nexport default function Page() {\n    return (\n        <main>\n            <h1>Dashboard</h1>\n            <Suspense fallback={<Skeleton />}>\n                <SlowComponent />\n            </Suspense>\n        </main>\n    );\n}"
+  },
+  {
+    "id": "nextjs-route-handler-dynamic",
+    "title": "Route Handler with CRUD",
+    "language": "nextjs",
+    "difficulty": "hard",
+    "tags": ["api-route", "route-handler", "crud"],
+    "code": "import { NextRequest, NextResponse } from 'next/server';\n\ntype Params = { params: { id: string } };\n\nexport async function GET(_req: NextRequest, { params }: Params) {\n    const item = await db.find(params.id);\n    if (!item) return NextResponse.json({ error: 'Not found' }, { status: 404 });\n    return NextResponse.json(item);\n}\n\nexport async function PATCH(req: NextRequest, { params }: Params) {\n    const body = await req.json();\n    const updated = await db.update(params.id, body);\n    if (!updated) return NextResponse.json({ error: 'Not found' }, { status: 404 });\n    return NextResponse.json(updated);\n}\n\nexport async function DELETE(_req: NextRequest, { params }: Params) {\n    await db.delete(params.id);\n    return new NextResponse(null, { status: 204 });\n}"
+  },
+  {
+    "id": "nextjs-revalidate-tag",
+    "title": "On-Demand Revalidation with Tags",
+    "language": "nextjs",
+    "difficulty": "hard",
+    "tags": ["caching", "revalidate", "tags", "isr"],
+    "code": "import { revalidateTag } from 'next/cache';\nimport { NextRequest, NextResponse } from 'next/server';\n\n// Fetch tagged with 'posts'\nasync function getPosts() {\n    return fetch('https://api.example.com/posts', {\n        next: { tags: ['posts'] },\n    }).then(r => r.json());\n}\n\n// Page uses tagged data\nexport default async function PostsPage() {\n    const posts = await getPosts();\n    return <ul>{posts.map((p: { id: number; title: string }) => <li key={p.id}>{p.title}</li>)}</ul>;\n}\n\n// Webhook handler triggers revalidation\nexport async function POST(req: NextRequest) {\n    const secret = req.headers.get('x-webhook-secret');\n    if (secret !== process.env.WEBHOOK_SECRET) {\n        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });\n    }\n    revalidateTag('posts');\n    return NextResponse.json({ revalidated: true });\n}"
+  },
+  {
+    "id": "nextjs-parallel-fetch",
+    "title": "Parallel Data Fetching + Error Handling",
+    "language": "nextjs",
+    "difficulty": "hard",
+    "tags": ["async", "parallel", "error-handling"],
+    "code": "import { notFound } from 'next/navigation';\n\nasync function fetchUser(id: string) {\n    const res = await fetch(`https://api.example.com/users/${id}`, { next: { revalidate: 300 } });\n    if (res.status === 404) notFound();\n    if (!res.ok) throw new Error(`User fetch failed: ${res.status}`);\n    return res.json();\n}\n\nasync function fetchUserPosts(id: string) {\n    const res = await fetch(`https://api.example.com/users/${id}/posts`, { next: { revalidate: 60 } });\n    if (!res.ok) return [];\n    return res.json();\n}\n\nexport default async function ProfilePage({ params }: { params: { id: string } }) {\n    const [user, posts] = await Promise.all([\n        fetchUser(params.id),\n        fetchUserPosts(params.id),\n    ]);\n\n    return (\n        <div>\n            <h1>{user.name}</h1>\n            <p>{posts.length} posts</p>\n        </div>\n    );\n}"
+  }
+]

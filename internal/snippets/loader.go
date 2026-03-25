@@ -20,6 +20,7 @@ func init() {
 		"data/typescript.json",
 		"data/go.json",
 		"data/cpp.json",
+		"data/nextjs.json",
 	}
 	for _, f := range files {
 		b, err := dataFS.ReadFile(f)

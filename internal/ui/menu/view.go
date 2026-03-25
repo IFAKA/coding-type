@@ -39,13 +39,13 @@ func (m Model) View() string {
 		"",
 		options,
 		"",
-		theme.Separator.Render(strings.Repeat("─", 70)),
+		theme.Separator.Render(strings.Repeat("─", 76)),
 		"",
 		help,
 	}, "\n")
 
 	box := theme.BoxBorder.
-		Width(76).
+		Width(82).
 		Padding(1, 3).
 		Render(content)
 
