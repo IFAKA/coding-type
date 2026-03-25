@@ -44,10 +44,7 @@ func (m Model) View() string {
 		help,
 	}, "\n")
 
-	box := theme.BoxBorder.
-		Width(82).
-		Padding(1, 3).
-		Render(content)
+	box := theme.RenderBox(content, m.width, 1, 3)
 
 	return lipgloss.Place(m.width, m.height,
 		lipgloss.Center, lipgloss.Center, box)

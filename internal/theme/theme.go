@@ -1,6 +1,33 @@
 package theme
 
-import "github.com/charmbracelet/lipgloss"
+import (
+	"strings"
+
+	"github.com/charmbracelet/lipgloss"
+)
+
+// RenderBox wraps inner content in the standard bordered box.
+// Width fits the content automatically, capped at termW-4.
+// padV and padH control vertical and horizontal padding inside the border.
+func RenderBox(inner string, termW, padV, padH int) string {
+	contentWidth := 0
+	for _, line := range strings.Split(inner, "\n") {
+		if w := lipgloss.Width(line); w > contentWidth {
+			contentWidth = w
+		}
+	}
+	// lipgloss Width() includes padding. Add 2*padH so the
+	// content area is exactly contentWidth wide.
+	boxWidth := contentWidth + 2*padH
+	if max := termW - 4; boxWidth > max {
+		boxWidth = max
+	}
+	return BoxBorder.
+		Width(boxWidth).
+		Padding(padV, padH).
+		BorderForeground(Surface1).
+		Render(inner)
+}
 
 // Catppuccin Mocha palette
 const (

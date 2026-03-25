@@ -37,10 +37,7 @@ func (m Model) View() string {
 		"",
 	}, "\n")
 
-	box := theme.BoxBorder.
-		Width(54).
-		BorderForeground(theme.Surface1).
-		Render(inner)
+	box := theme.RenderBox(inner, m.width, 0, 0)
 
 	header := theme.Title.Render("  your stats")
 	content := strings.Join([]string{header, box}, "\n")
@@ -112,7 +109,7 @@ func (m Model) emptyView() string {
 	help := "  " + theme.HelpKey.Render("m") + " " + theme.HelpDesc.Render("menu")
 
 	inner := "\n\n  " + msg + "\n\n" + help + "\n"
-	box := theme.BoxBorder.Width(54).BorderForeground(theme.Surface1).Render(inner)
+	box := theme.RenderBox(inner, m.width, 0, 0)
 	header := theme.Title.Render("  your stats")
 	content := strings.Join([]string{header, box}, "\n")
 	return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center, content)

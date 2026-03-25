@@ -71,10 +71,7 @@ func (m Model) View() string {
 		"",
 	}, "\n")
 
-	box := theme.BoxBorder.
-		Width(50).
-		BorderForeground(theme.Surface1).
-		Render(inner)
+	box := theme.RenderBox(inner, m.width, 0, 0)
 
 	header := theme.Title.Render("  results")
 
