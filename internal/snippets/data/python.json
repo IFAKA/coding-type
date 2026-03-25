@@ -1,0 +1,162 @@
+[
+  {
+    "id": "py-two-sum",
+    "title": "Two Sum",
+    "language": "python",
+    "difficulty": "easy",
+    "tags": ["hash-map", "array"],
+    "code": "def two_sum(nums, target):\n    seen = {}\n    for i, n in enumerate(nums):\n        complement = target - n\n        if complement in seen:\n            return [seen[complement], i]\n        seen[n] = i\n    return []"
+  },
+  {
+    "id": "py-valid-palindrome",
+    "title": "Valid Palindrome",
+    "language": "python",
+    "difficulty": "easy",
+    "tags": ["string", "two-pointers"],
+    "code": "def is_palindrome(s):\n    s = ''.join(c.lower() for c in s if c.isalnum())\n    return s == s[::-1]"
+  },
+  {
+    "id": "py-fibonacci",
+    "title": "Fibonacci Iterative",
+    "language": "python",
+    "difficulty": "easy",
+    "tags": ["dp", "math"],
+    "code": "def fibonacci(n):\n    if n <= 1:\n        return n\n    a, b = 0, 1\n    for _ in range(2, n + 1):\n        a, b = b, a + b\n    return b"
+  },
+  {
+    "id": "py-contains-duplicate",
+    "title": "Contains Duplicate",
+    "language": "python",
+    "difficulty": "easy",
+    "tags": ["hash-set", "array"],
+    "code": "def contains_duplicate(nums):\n    seen = set()\n    for n in nums:\n        if n in seen:\n            return True\n        seen.add(n)\n    return False"
+  },
+  {
+    "id": "py-max-subarray",
+    "title": "Maximum Subarray (Kadane's)",
+    "language": "python",
+    "difficulty": "easy",
+    "tags": ["dp", "array"],
+    "code": "def max_subarray(nums):\n    max_sum = current = nums[0]\n    for n in nums[1:]:\n        current = max(n, current + n)\n        max_sum = max(max_sum, current)\n    return max_sum"
+  },
+  {
+    "id": "py-valid-parens",
+    "title": "Valid Parentheses",
+    "language": "python",
+    "difficulty": "easy",
+    "tags": ["stack", "string"],
+    "code": "def valid_parentheses(s):\n    stack = []\n    pairs = {')': '(', '}': '{', ']': '['}\n    for c in s:\n        if c in '({[':\n            stack.append(c)\n        elif not stack or stack[-1] != pairs[c]:\n            return False\n        else:\n            stack.pop()\n    return len(stack) == 0"
+  },
+  {
+    "id": "py-missing-number",
+    "title": "Missing Number",
+    "language": "python",
+    "difficulty": "easy",
+    "tags": ["math", "array"],
+    "code": "def missing_number(nums):\n    n = len(nums)\n    return n * (n + 1) // 2 - sum(nums)"
+  },
+  {
+    "id": "py-best-time-stock",
+    "title": "Best Time to Buy and Sell Stock",
+    "language": "python",
+    "difficulty": "easy",
+    "tags": ["array", "greedy"],
+    "code": "def max_profit(prices):\n    min_price = float('inf')\n    max_profit = 0\n    for price in prices:\n        min_price = min(min_price, price)\n        max_profit = max(max_profit, price - min_price)\n    return max_profit"
+  },
+  {
+    "id": "py-binary-search",
+    "title": "Binary Search",
+    "language": "python",
+    "difficulty": "medium",
+    "tags": ["binary-search", "array"],
+    "code": "def binary_search(nums, target):\n    left, right = 0, len(nums) - 1\n    while left <= right:\n        mid = (left + right) // 2\n        if nums[mid] == target:\n            return mid\n        elif nums[mid] < target:\n            left = mid + 1\n        else:\n            right = mid - 1\n    return -1"
+  },
+  {
+    "id": "py-level-order-bfs",
+    "title": "Binary Tree Level Order (BFS)",
+    "language": "python",
+    "difficulty": "medium",
+    "tags": ["tree", "bfs", "queue"],
+    "code": "from collections import deque\n\ndef level_order(root):\n    if not root:\n        return []\n    result, queue = [], deque([root])\n    while queue:\n        level = []\n        for _ in range(len(queue)):\n            node = queue.popleft()\n            level.append(node.val)\n            if node.left:\n                queue.append(node.left)\n            if node.right:\n                queue.append(node.right)\n        result.append(level)\n    return result"
+  },
+  {
+    "id": "py-three-sum",
+    "title": "Three Sum",
+    "language": "python",
+    "difficulty": "medium",
+    "tags": ["array", "two-pointers", "sorting"],
+    "code": "def three_sum(nums):\n    nums.sort()\n    result = []\n    for i in range(len(nums) - 2):\n        if i > 0 and nums[i] == nums[i - 1]:\n            continue\n        left, right = i + 1, len(nums) - 1\n        while left < right:\n            total = nums[i] + nums[left] + nums[right]\n            if total == 0:\n                result.append([nums[i], nums[left], nums[right]])\n                while left < right and nums[left] == nums[left + 1]:\n                    left += 1\n                while left < right and nums[right] == nums[right - 1]:\n                    right -= 1\n                left += 1\n                right -= 1\n            elif total < 0:\n                left += 1\n            else:\n                right -= 1\n    return result"
+  },
+  {
+    "id": "py-merge-intervals",
+    "title": "Merge Intervals",
+    "language": "python",
+    "difficulty": "medium",
+    "tags": ["array", "sorting"],
+    "code": "def merge_intervals(intervals):\n    intervals.sort(key=lambda x: x[0])\n    merged = [intervals[0]]\n    for start, end in intervals[1:]:\n        if start <= merged[-1][1]:\n            merged[-1][1] = max(merged[-1][1], end)\n        else:\n            merged.append([start, end])\n    return merged"
+  },
+  {
+    "id": "py-longest-substring",
+    "title": "Longest Substring Without Repeating",
+    "language": "python",
+    "difficulty": "medium",
+    "tags": ["sliding-window", "hash-map", "string"],
+    "code": "def length_of_longest_substring(s):\n    char_index = {}\n    left = max_len = 0\n    for right, c in enumerate(s):\n        if c in char_index and char_index[c] >= left:\n            left = char_index[c] + 1\n        char_index[c] = right\n        max_len = max(max_len, right - left + 1)\n    return max_len"
+  },
+  {
+    "id": "py-climb-stairs",
+    "title": "Climb Stairs (DP)",
+    "language": "python",
+    "difficulty": "medium",
+    "tags": ["dp", "math"],
+    "code": "def climb_stairs(n):\n    if n <= 2:\n        return n\n    a, b = 1, 2\n    for _ in range(3, n + 1):\n        a, b = b, a + b\n    return b"
+  },
+  {
+    "id": "py-number-of-islands",
+    "title": "Number of Islands (DFS)",
+    "language": "python",
+    "difficulty": "medium",
+    "tags": ["graph", "dfs", "bfs", "matrix"],
+    "code": "def num_islands(grid):\n    if not grid:\n        return 0\n    count = 0\n\n    def dfs(r, c):\n        if r < 0 or r >= len(grid) or c < 0 or c >= len(grid[0]):\n            return\n        if grid[r][c] != '1':\n            return\n        grid[r][c] = '0'\n        for dr, dc in [(0, 1), (0, -1), (1, 0), (-1, 0)]:\n            dfs(r + dr, c + dc)\n\n    for r in range(len(grid)):\n        for c in range(len(grid[0])):\n            if grid[r][c] == '1':\n                dfs(r, c)\n                count += 1\n    return count"
+  },
+  {
+    "id": "py-group-anagrams",
+    "title": "Group Anagrams",
+    "language": "python",
+    "difficulty": "medium",
+    "tags": ["hash-map", "string", "sorting"],
+    "code": "from collections import defaultdict\n\ndef group_anagrams(strs):\n    groups = defaultdict(list)\n    for s in strs:\n        key = tuple(sorted(s))\n        groups[key].append(s)\n    return list(groups.values())"
+  },
+  {
+    "id": "py-lru-cache",
+    "title": "LRU Cache",
+    "language": "python",
+    "difficulty": "hard",
+    "tags": ["design", "hash-map", "linked-list"],
+    "code": "from collections import OrderedDict\n\nclass LRUCache:\n    def __init__(self, capacity):\n        self.cap = capacity\n        self.cache = OrderedDict()\n\n    def get(self, key):\n        if key not in self.cache:\n            return -1\n        self.cache.move_to_end(key)\n        return self.cache[key]\n\n    def put(self, key, value):\n        if key in self.cache:\n            self.cache.move_to_end(key)\n        self.cache[key] = value\n        if len(self.cache) > self.cap:\n            self.cache.popitem(last=False)"
+  },
+  {
+    "id": "py-coin-change",
+    "title": "Coin Change (DP)",
+    "language": "python",
+    "difficulty": "hard",
+    "tags": ["dp", "bfs"],
+    "code": "def coin_change(coins, amount):\n    dp = [float('inf')] * (amount + 1)\n    dp[0] = 0\n    for i in range(1, amount + 1):\n        for coin in coins:\n            if coin <= i:\n                dp[i] = min(dp[i], dp[i - coin] + 1)\n    return dp[amount] if dp[amount] != float('inf') else -1"
+  },
+  {
+    "id": "py-course-schedule",
+    "title": "Course Schedule (Topological Sort)",
+    "language": "python",
+    "difficulty": "hard",
+    "tags": ["graph", "topological-sort", "dfs"],
+    "code": "from collections import defaultdict, deque\n\ndef can_finish(num_courses, prerequisites):\n    graph = defaultdict(list)\n    indegree = [0] * num_courses\n    for a, b in prerequisites:\n        graph[b].append(a)\n        indegree[a] += 1\n    queue = deque(i for i in range(num_courses) if indegree[i] == 0)\n    completed = 0\n    while queue:\n        node = queue.popleft()\n        completed += 1\n        for neighbor in graph[node]:\n            indegree[neighbor] -= 1\n            if indegree[neighbor] == 0:\n                queue.append(neighbor)\n    return completed == num_courses"
+  },
+  {
+    "id": "py-word-break",
+    "title": "Word Break (DP)",
+    "language": "python",
+    "difficulty": "hard",
+    "tags": ["dp", "string", "trie"],
+    "code": "def word_break(s, word_dict):\n    word_set = set(word_dict)\n    n = len(s)\n    dp = [False] * (n + 1)\n    dp[0] = True\n    for i in range(1, n + 1):\n        for j in range(i):\n            if dp[j] and s[j:i] in word_set:\n                dp[i] = True\n                break\n    return dp[n]"
+  }
+]

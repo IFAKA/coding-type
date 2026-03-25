@@ -1,0 +1,122 @@
+package typing
+
+import (
+	"fmt"
+	"strings"
+	"time"
+
+	"github.com/charmbracelet/lipgloss"
+	"github.com/IFAKA/coding-type/internal/engine"
+	"github.com/IFAKA/coding-type/internal/theme"
+)
+
+func (m Model) View() string {
+	header := renderHeader(m)
+	code := renderCode(m.state)
+	statsBar := renderStats(m)
+	help := "  " + theme.HelpKey.Render("esc") + " " + theme.HelpDesc.Render("menu") +
+		"   " + theme.HelpKey.Render("ctrl+r") + " " + theme.HelpDesc.Render("restart")
+
+	inner := strings.Join([]string{"", code, "", statsBar}, "\n")
+
+	box := theme.BoxBorder.
+		Width(min(m.width-4, 72)).
+		Padding(0, 2).
+		BorderForeground(theme.Surface1).
+		Render(inner)
+
+	content := strings.Join([]string{header, box, help}, "\n")
+
+	return lipgloss.Place(m.width, m.height,
+		lipgloss.Center, lipgloss.Center, content)
+}
+
+func renderHeader(m Model) string {
+	lang := theme.HeaderBadge.Render(" " + m.config.Language + " ")
+	dot := theme.Muted.Render(" · ")
+	diff := diffStyle(m.config.Difficulty).Render(m.config.Difficulty)
+	mode := theme.Muted.Render(m.config.Mode)
+	title := theme.Muted.Render(m.snippet.Title)
+	return "  " + lang + dot + diff + dot + mode + dot + title + "\n"
+}
+
+func renderCode(s engine.TypingState) string {
+	var sb strings.Builder
+	for i, r := range s.Target {
+		style := charStyle(s, i)
+		if r == '\n' {
+			if i == s.Cursor {
+				sb.WriteString(style.Render("↵"))
+			}
+			sb.WriteRune('\n')
+		} else {
+			sb.WriteString(style.Render(string(r)))
+		}
+	}
+	return sb.String()
+}
+
+func charStyle(s engine.TypingState, i int) lipgloss.Style {
+	// Cursor position
+	if i == s.Cursor {
+		return theme.CursorChar
+	}
+
+	switch s.States[i] {
+	case engine.Correct:
+		return theme.CorrectChar
+	case engine.Incorrect:
+		return theme.IncorrectChar
+	default:
+		// Untyped: use dim syntax color
+		if i < len(s.SyntaxColors) {
+			return lipgloss.NewStyle().Foreground(s.SyntaxColors[i]).Faint(true)
+		}
+		return theme.UntypedChar
+	}
+}
+
+func renderStats(m Model) string {
+	s := m.state
+
+	wpm := fmt.Sprintf("WPM %s", theme.StatValue.Render(fmt.Sprintf("%d", s.WPM())))
+	acc := fmt.Sprintf("ACC %s", theme.StatValue.Render(fmt.Sprintf("%.0f%%", s.Accuracy())))
+
+	var timerStr string
+	if m.config.Mode == "timed" && s.Started {
+		remaining := timedDuration - time.Since(s.StartedAt)
+		if remaining < 0 {
+			remaining = 0
+		}
+		secs := int(remaining.Seconds())
+		timerStr = fmt.Sprintf("%s", theme.StatValue.Render(fmt.Sprintf("%02d:%02d", secs/60, secs%60)))
+	} else {
+		elapsed := s.ElapsedSeconds()
+		timerStr = theme.StatValue.Render(fmt.Sprintf("%02d:%02d", elapsed/60, elapsed%60))
+	}
+
+	progress := fmt.Sprintf("%d/%d", s.Cursor, len(s.Target))
+
+	dot := theme.Muted.Render("  ·  ")
+	return "  " + strings.Join([]string{wpm, acc, timerStr, theme.Muted.Render(progress)}, dot)
+}
+
+func diffStyle(diff string) lipgloss.Style {
+	switch diff {
+	case "easy":
+		return theme.DiffEasy
+	case "medium":
+		return theme.DiffMedium
+	case "hard":
+		return theme.DiffHard
+	default:
+		return theme.Muted
+	}
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}

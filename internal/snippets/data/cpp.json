@@ -1,0 +1,114 @@
+[
+  {
+    "id": "cpp-two-sum",
+    "title": "Two Sum",
+    "language": "cpp",
+    "difficulty": "easy",
+    "tags": ["hash-map", "array"],
+    "code": "vector<int> twoSum(vector<int>& nums, int target) {\n    unordered_map<int, int> seen;\n    for (int i = 0; i < (int)nums.size(); i++) {\n        int complement = target - nums[i];\n        if (seen.count(complement)) {\n            return {seen[complement], i};\n        }\n        seen[nums[i]] = i;\n    }\n    return {};\n}"
+  },
+  {
+    "id": "cpp-valid-parens",
+    "title": "Valid Parentheses",
+    "language": "cpp",
+    "difficulty": "easy",
+    "tags": ["stack", "string"],
+    "code": "bool validParentheses(string s) {\n    stack<char> st;\n    unordered_map<char, char> pairs = {{')', '('}, {'}', '{'}, {']', '['}};\n    for (char c : s) {\n        if (c == '(' || c == '{' || c == '[') {\n            st.push(c);\n        } else {\n            if (st.empty() || st.top() != pairs[c]) return false;\n            st.pop();\n        }\n    }\n    return st.empty();\n}"
+  },
+  {
+    "id": "cpp-max-subarray",
+    "title": "Maximum Subarray (Kadane's)",
+    "language": "cpp",
+    "difficulty": "easy",
+    "tags": ["dp", "array"],
+    "code": "int maxSubarray(vector<int>& nums) {\n    int maxSum = nums[0], current = nums[0];\n    for (int i = 1; i < (int)nums.size(); i++) {\n        current = max(nums[i], current + nums[i]);\n        maxSum = max(maxSum, current);\n    }\n    return maxSum;\n}"
+  },
+  {
+    "id": "cpp-reverse-string",
+    "title": "Reverse String",
+    "language": "cpp",
+    "difficulty": "easy",
+    "tags": ["string", "two-pointers"],
+    "code": "void reverseString(vector<char>& s) {\n    int left = 0, right = (int)s.size() - 1;\n    while (left < right) {\n        swap(s[left++], s[right--]);\n    }\n}"
+  },
+  {
+    "id": "cpp-missing-number",
+    "title": "Missing Number (XOR)",
+    "language": "cpp",
+    "difficulty": "easy",
+    "tags": ["bit-manipulation", "math"],
+    "code": "int missingNumber(vector<int>& nums) {\n    int result = nums.size();\n    for (int i = 0; i < (int)nums.size(); i++) {\n        result ^= i ^ nums[i];\n    }\n    return result;\n}"
+  },
+  {
+    "id": "cpp-binary-search",
+    "title": "Binary Search",
+    "language": "cpp",
+    "difficulty": "medium",
+    "tags": ["binary-search", "array"],
+    "code": "int binarySearch(vector<int>& nums, int target) {\n    int left = 0, right = (int)nums.size() - 1;\n    while (left <= right) {\n        int mid = left + (right - left) / 2;\n        if (nums[mid] == target) return mid;\n        if (nums[mid] < target) left = mid + 1;\n        else right = mid - 1;\n    }\n    return -1;\n}"
+  },
+  {
+    "id": "cpp-merge-intervals",
+    "title": "Merge Intervals",
+    "language": "cpp",
+    "difficulty": "medium",
+    "tags": ["array", "sorting"],
+    "code": "vector<vector<int>> mergeIntervals(vector<vector<int>>& intervals) {\n    sort(intervals.begin(), intervals.end());\n    vector<vector<int>> merged = {intervals[0]};\n    for (int i = 1; i < (int)intervals.size(); i++) {\n        if (intervals[i][0] <= merged.back()[1]) {\n            merged.back()[1] = max(merged.back()[1], intervals[i][1]);\n        } else {\n            merged.push_back(intervals[i]);\n        }\n    }\n    return merged;\n}"
+  },
+  {
+    "id": "cpp-level-order",
+    "title": "Binary Tree Level Order (BFS)",
+    "language": "cpp",
+    "difficulty": "medium",
+    "tags": ["tree", "bfs"],
+    "code": "vector<vector<int>> levelOrder(TreeNode* root) {\n    if (!root) return {};\n    vector<vector<int>> result;\n    queue<TreeNode*> q;\n    q.push(root);\n    while (!q.empty()) {\n        int size = q.size();\n        vector<int> level;\n        for (int i = 0; i < size; i++) {\n            TreeNode* node = q.front(); q.pop();\n            level.push_back(node->val);\n            if (node->left) q.push(node->left);\n            if (node->right) q.push(node->right);\n        }\n        result.push_back(level);\n    }\n    return result;\n}"
+  },
+  {
+    "id": "cpp-sliding-window-max",
+    "title": "Sliding Window Maximum",
+    "language": "cpp",
+    "difficulty": "medium",
+    "tags": ["sliding-window", "deque"],
+    "code": "vector<int> maxSlidingWindow(vector<int>& nums, int k) {\n    deque<int> dq;\n    vector<int> result;\n    for (int i = 0; i < (int)nums.size(); i++) {\n        while (!dq.empty() && dq.front() < i - k + 1) dq.pop_front();\n        while (!dq.empty() && nums[dq.back()] < nums[i]) dq.pop_back();\n        dq.push_back(i);\n        if (i >= k - 1) result.push_back(nums[dq.front()]);\n    }\n    return result;\n}"
+  },
+  {
+    "id": "cpp-group-anagrams",
+    "title": "Group Anagrams",
+    "language": "cpp",
+    "difficulty": "medium",
+    "tags": ["hash-map", "string", "sorting"],
+    "code": "vector<vector<string>> groupAnagrams(vector<string>& strs) {\n    unordered_map<string, vector<string>> groups;\n    for (const string& s : strs) {\n        string key = s;\n        sort(key.begin(), key.end());\n        groups[key].push_back(s);\n    }\n    vector<vector<string>> result;\n    for (auto& [key, words] : groups) {\n        result.push_back(words);\n    }\n    return result;\n}"
+  },
+  {
+    "id": "cpp-three-sum",
+    "title": "Three Sum",
+    "language": "cpp",
+    "difficulty": "medium",
+    "tags": ["array", "two-pointers", "sorting"],
+    "code": "vector<vector<int>> threeSum(vector<int>& nums) {\n    sort(nums.begin(), nums.end());\n    vector<vector<int>> result;\n    for (int i = 0; i < (int)nums.size() - 2; i++) {\n        if (i > 0 && nums[i] == nums[i-1]) continue;\n        int left = i+1, right = (int)nums.size()-1;\n        while (left < right) {\n            int sum = nums[i] + nums[left] + nums[right];\n            if (sum == 0) {\n                result.push_back({nums[i], nums[left], nums[right]});\n                while (left < right && nums[left] == nums[left+1]) left++;\n                while (left < right && nums[right] == nums[right-1]) right--;\n                left++; right--;\n            } else if (sum < 0) left++;\n            else right--;\n        }\n    }\n    return result;\n}"
+  },
+  {
+    "id": "cpp-coin-change",
+    "title": "Coin Change (DP)",
+    "language": "cpp",
+    "difficulty": "hard",
+    "tags": ["dp"],
+    "code": "int coinChange(vector<int>& coins, int amount) {\n    vector<int> dp(amount + 1, amount + 1);\n    dp[0] = 0;\n    for (int i = 1; i <= amount; i++) {\n        for (int coin : coins) {\n            if (coin <= i) {\n                dp[i] = min(dp[i], dp[i - coin] + 1);\n            }\n        }\n    }\n    return dp[amount] > amount ? -1 : dp[amount];\n}"
+  },
+  {
+    "id": "cpp-course-schedule",
+    "title": "Course Schedule (Topological Sort)",
+    "language": "cpp",
+    "difficulty": "hard",
+    "tags": ["graph", "topological-sort"],
+    "code": "bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {\n    vector<vector<int>> graph(numCourses);\n    vector<int> indegree(numCourses, 0);\n    for (auto& p : prerequisites) {\n        graph[p[1]].push_back(p[0]);\n        indegree[p[0]]++;\n    }\n    queue<int> q;\n    for (int i = 0; i < numCourses; i++) {\n        if (indegree[i] == 0) q.push(i);\n    }\n    int completed = 0;\n    while (!q.empty()) {\n        int node = q.front(); q.pop();\n        completed++;\n        for (int next : graph[node]) {\n            if (--indegree[next] == 0) q.push(next);\n        }\n    }\n    return completed == numCourses;\n}"
+  },
+  {
+    "id": "cpp-lru-cache",
+    "title": "LRU Cache",
+    "language": "cpp",
+    "difficulty": "hard",
+    "tags": ["design", "hash-map", "linked-list"],
+    "code": "class LRUCache {\n    int cap;\n    list<pair<int,int>> lst;\n    unordered_map<int, list<pair<int,int>>::iterator> mp;\npublic:\n    LRUCache(int capacity) : cap(capacity) {}\n    int get(int key) {\n        if (!mp.count(key)) return -1;\n        lst.splice(lst.begin(), lst, mp[key]);\n        return mp[key]->second;\n    }\n    void put(int key, int value) {\n        if (mp.count(key)) lst.erase(mp[key]);\n        lst.push_front({key, value});\n        mp[key] = lst.begin();\n        if ((int)lst.size() > cap) {\n            mp.erase(lst.back().first);\n            lst.pop_back();\n        }\n    }\n};"
+  }
+]

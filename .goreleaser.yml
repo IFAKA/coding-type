@@ -1,0 +1,39 @@
+version: 2
+
+project_name: coding-type
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: coding-type
+    binary: coding-type
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w -X main.version={{.Version}}
+
+archives:
+  - id: default
+    name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
+    format: tar.gz
+    files:
+      - README.md
+
+checksum:
+  name_template: "checksums.txt"
+
+release:
+  github:
+    owner: IFAKA
+    name: coding-type
+  draft: false
+  prerelease: auto
+  name_template: "v{{ .Version }}"

@@ -1,0 +1,114 @@
+[
+  {
+    "id": "go-two-sum",
+    "title": "Two Sum",
+    "language": "go",
+    "difficulty": "easy",
+    "tags": ["hash-map", "array"],
+    "code": "func twoSum(nums []int, target int) []int {\n    seen := make(map[int]int)\n    for i, n := range nums {\n        complement := target - n\n        if j, ok := seen[complement]; ok {\n            return []int{j, i}\n        }\n        seen[n] = i\n    }\n    return nil\n}"
+  },
+  {
+    "id": "go-valid-parens",
+    "title": "Valid Parentheses",
+    "language": "go",
+    "difficulty": "easy",
+    "tags": ["stack", "string"],
+    "code": "func validParentheses(s string) bool {\n    stack := []rune{}\n    pairs := map[rune]rune{')': '(', '}': '{', ']': '['}\n    for _, c := range s {\n        if c == '(' || c == '{' || c == '[' {\n            stack = append(stack, c)\n        } else {\n            if len(stack) == 0 || stack[len(stack)-1] != pairs[c] {\n                return false\n            }\n            stack = stack[:len(stack)-1]\n        }\n    }\n    return len(stack) == 0\n}"
+  },
+  {
+    "id": "go-max-subarray",
+    "title": "Maximum Subarray (Kadane's)",
+    "language": "go",
+    "difficulty": "easy",
+    "tags": ["dp", "array"],
+    "code": "func maxSubarray(nums []int) int {\n    maxSum, current := nums[0], nums[0]\n    for _, n := range nums[1:] {\n        if n > current+n {\n            current = n\n        } else {\n            current += n\n        }\n        if current > maxSum {\n            maxSum = current\n        }\n    }\n    return maxSum\n}"
+  },
+  {
+    "id": "go-reverse-string",
+    "title": "Reverse String",
+    "language": "go",
+    "difficulty": "easy",
+    "tags": ["string", "two-pointers"],
+    "code": "func reverseString(s []byte) {\n    left, right := 0, len(s)-1\n    for left < right {\n        s[left], s[right] = s[right], s[left]\n        left++\n        right--\n    }\n}"
+  },
+  {
+    "id": "go-word-frequency",
+    "title": "Word Frequency Counter",
+    "language": "go",
+    "difficulty": "easy",
+    "tags": ["map", "string"],
+    "code": "func wordFrequency(words []string) map[string]int {\n    freq := make(map[string]int)\n    for _, w := range words {\n        freq[w]++\n    }\n    return freq\n}"
+  },
+  {
+    "id": "go-binary-search",
+    "title": "Binary Search",
+    "language": "go",
+    "difficulty": "medium",
+    "tags": ["binary-search", "array"],
+    "code": "func binarySearch(nums []int, target int) int {\n    left, right := 0, len(nums)-1\n    for left <= right {\n        mid := left + (right-left)/2\n        if nums[mid] == target {\n            return mid\n        } else if nums[mid] < target {\n            left = mid + 1\n        } else {\n            right = mid - 1\n        }\n    }\n    return -1\n}"
+  },
+  {
+    "id": "go-merge-intervals",
+    "title": "Merge Intervals",
+    "language": "go",
+    "difficulty": "medium",
+    "tags": ["array", "sorting"],
+    "code": "import \"sort\"\n\nfunc mergeIntervals(intervals [][]int) [][]int {\n    sort.Slice(intervals, func(i, j int) bool {\n        return intervals[i][0] < intervals[j][0]\n    })\n    merged := [][]int{intervals[0]}\n    for _, iv := range intervals[1:] {\n        last := merged[len(merged)-1]\n        if iv[0] <= last[1] {\n            if iv[1] > last[1] {\n                merged[len(merged)-1][1] = iv[1]\n            }\n        } else {\n            merged = append(merged, iv)\n        }\n    }\n    return merged\n}"
+  },
+  {
+    "id": "go-level-order",
+    "title": "Binary Tree Level Order (BFS)",
+    "language": "go",
+    "difficulty": "medium",
+    "tags": ["tree", "bfs"],
+    "code": "func levelOrder(root *TreeNode) [][]int {\n    if root == nil {\n        return nil\n    }\n    result := [][]int{}\n    queue := []*TreeNode{root}\n    for len(queue) > 0 {\n        level := []int{}\n        size := len(queue)\n        for i := 0; i < size; i++ {\n            node := queue[0]\n            queue = queue[1:]\n            level = append(level, node.Val)\n            if node.Left != nil {\n                queue = append(queue, node.Left)\n            }\n            if node.Right != nil {\n                queue = append(queue, node.Right)\n            }\n        }\n        result = append(result, level)\n    }\n    return result\n}"
+  },
+  {
+    "id": "go-longest-substring",
+    "title": "Longest Substring Without Repeating",
+    "language": "go",
+    "difficulty": "medium",
+    "tags": ["sliding-window", "map"],
+    "code": "func lengthOfLongestSubstring(s string) int {\n    charIndex := make(map[byte]int)\n    left, maxLen := 0, 0\n    for right := 0; right < len(s); right++ {\n        if idx, ok := charIndex[s[right]]; ok && idx >= left {\n            left = idx + 1\n        }\n        charIndex[s[right]] = right\n        if right-left+1 > maxLen {\n            maxLen = right - left + 1\n        }\n    }\n    return maxLen\n}"
+  },
+  {
+    "id": "go-goroutine-pool",
+    "title": "Worker Pool with Goroutines",
+    "language": "go",
+    "difficulty": "medium",
+    "tags": ["concurrency", "goroutines", "channels"],
+    "code": "func workerPool(jobs <-chan int, results chan<- int, workers int) {\n    var wg sync.WaitGroup\n    for i := 0; i < workers; i++ {\n        wg.Add(1)\n        go func() {\n            defer wg.Done()\n            for job := range jobs {\n                results <- job * job\n            }\n        }()\n    }\n    go func() {\n        wg.Wait()\n        close(results)\n    }()\n}"
+  },
+  {
+    "id": "go-group-anagrams",
+    "title": "Group Anagrams",
+    "language": "go",
+    "difficulty": "medium",
+    "tags": ["hash-map", "string", "sorting"],
+    "code": "import \"sort\"\n\nfunc groupAnagrams(strs []string) [][]string {\n    groups := make(map[string][]string)\n    for _, s := range strs {\n        b := []byte(s)\n        sort.Slice(b, func(i, j int) bool { return b[i] < b[j] })\n        key := string(b)\n        groups[key] = append(groups[key], s)\n    }\n    result := make([][]string, 0, len(groups))\n    for _, v := range groups {\n        result = append(result, v)\n    }\n    return result\n}"
+  },
+  {
+    "id": "go-coin-change",
+    "title": "Coin Change (DP)",
+    "language": "go",
+    "difficulty": "hard",
+    "tags": ["dp"],
+    "code": "func coinChange(coins []int, amount int) int {\n    dp := make([]int, amount+1)\n    for i := range dp {\n        dp[i] = amount + 1\n    }\n    dp[0] = 0\n    for i := 1; i <= amount; i++ {\n        for _, coin := range coins {\n            if coin <= i && dp[i-coin]+1 < dp[i] {\n                dp[i] = dp[i-coin] + 1\n            }\n        }\n    }\n    if dp[amount] > amount {\n        return -1\n    }\n    return dp[amount]\n}"
+  },
+  {
+    "id": "go-course-schedule",
+    "title": "Course Schedule (Topological Sort)",
+    "language": "go",
+    "difficulty": "hard",
+    "tags": ["graph", "topological-sort"],
+    "code": "func canFinish(numCourses int, prerequisites [][]int) bool {\n    graph := make([][]int, numCourses)\n    indegree := make([]int, numCourses)\n    for _, p := range prerequisites {\n        graph[p[1]] = append(graph[p[1]], p[0])\n        indegree[p[0]]++\n    }\n    queue := []int{}\n    for i, d := range indegree {\n        if d == 0 {\n            queue = append(queue, i)\n        }\n    }\n    completed := 0\n    for len(queue) > 0 {\n        node := queue[0]\n        queue = queue[1:]\n        completed++\n        for _, next := range graph[node] {\n            indegree[next]--\n            if indegree[next] == 0 {\n                queue = append(queue, next)\n            }\n        }\n    }\n    return completed == numCourses\n}"
+  },
+  {
+    "id": "go-trie",
+    "title": "Trie Insert and Search",
+    "language": "go",
+    "difficulty": "hard",
+    "tags": ["trie", "design"],
+    "code": "type TrieNode struct {\n    children [26]*TrieNode\n    isEnd    bool\n}\n\ntype Trie struct {\n    root *TrieNode\n}\n\nfunc NewTrie() *Trie { return &Trie{root: &TrieNode{}} }\n\nfunc (t *Trie) Insert(word string) {\n    node := t.root\n    for _, c := range word {\n        idx := c - 'a'\n        if node.children[idx] == nil {\n            node.children[idx] = &TrieNode{}\n        }\n        node = node.children[idx]\n    }\n    node.isEnd = true\n}\n\nfunc (t *Trie) Search(word string) bool {\n    node := t.root\n    for _, c := range word {\n        idx := c - 'a'\n        if node.children[idx] == nil {\n            return false\n        }\n        node = node.children[idx]\n    }\n    return node.isEnd\n}"
+  }
+]
