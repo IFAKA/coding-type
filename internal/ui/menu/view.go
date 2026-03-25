@@ -39,13 +39,13 @@ func (m Model) View() string {
 		"",
 		options,
 		"",
-		theme.Separator.Render(strings.Repeat("─", 46)),
+		theme.Separator.Render(strings.Repeat("─", 70)),
 		"",
 		help,
 	}, "\n")
 
 	box := theme.BoxBorder.
-		Width(50).
+		Width(76).
 		Padding(1, 3).
 		Render(content)
 
@@ -91,8 +91,8 @@ func renderHelp() string {
 	entries := []struct{ key, desc string }{
 		{"enter", "start"},
 		{"s", "stats"},
-		{"←/→", "change"},
-		{"↑/↓", "row"},
+		{"h/l", "change"},
+		{"j/k", "row"},
 		{"q", "quit"},
 	}
 	var parts []string
