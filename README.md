@@ -2,6 +2,8 @@
 
 A terminal typing tutor for coding interview prep. Practice real algorithm patterns — binary search, BFS, dynamic programming — in Python, JavaScript, TypeScript, Go, and C++.
 
+<img width="1512" height="918" alt="Screenshot 2026-03-25 at 22 43 31" src="https://github.com/user-attachments/assets/32377351-b371-4c44-b2e0-438205527b84" />
+
 <img width="1512" height="918" alt="Screenshot 2026-03-25 at 22 42 26" src="https://github.com/user-attachments/assets/1e5e792e-bcba-46f2-93b1-e63765f6e516" />
 
 ## Install
