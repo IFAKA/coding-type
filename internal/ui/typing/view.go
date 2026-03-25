@@ -19,13 +19,18 @@ func (m Model) View() string {
 
 	inner := strings.Join([]string{"", code, "", statsBar}, "\n")
 
-	box := theme.BoxBorder.
-		Width(min(m.width-4, 72)).
-		Padding(0, 2).
-		BorderForeground(theme.Surface1).
-		Render(inner)
+	box := theme.RenderBox(inner, m.width, 0, 2)
 
-	content := strings.Join([]string{header, box, help}, "\n")
+	var curChar rune
+	if m.state.Cursor < len(m.state.Target) {
+		curChar = m.state.Target[m.state.Cursor]
+	}
+	keyboard := lipgloss.NewStyle().
+		Width(lipgloss.Width(box)).
+		Align(lipgloss.Center).
+		Render(renderKeyboard(curChar))
+
+	content := strings.Join([]string{header, box, help, "", keyboard}, "\n")
 
 	return lipgloss.Place(m.width, m.height,
 		lipgloss.Center, lipgloss.Center, content)
@@ -114,9 +119,3 @@ func diffStyle(diff string) lipgloss.Style {
 	}
 }
 
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}
