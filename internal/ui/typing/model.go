@@ -6,6 +6,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/IFAKA/coding-type/internal/engine"
 	"github.com/IFAKA/coding-type/internal/snippets"
+	"github.com/IFAKA/coding-type/internal/sound"
 	"github.com/IFAKA/coding-type/internal/ui/msgs"
 )
 
@@ -15,13 +16,16 @@ type tickMsg struct{}
 
 // Model is the BubbleTea model for the typing exercise screen.
 type Model struct {
-	state   engine.TypingState
-	snippet snippets.Snippet
-	config  snippets.Config
-	bestWPM int
-	avgWPM  int
-	width   int
-	height  int
+	state         engine.TypingState
+	snippet       snippets.Snippet
+	config        snippets.Config
+	bestWPM       int
+	avgWPM        int
+	width         int
+	height        int
+	cursorVisible bool
+	errorFlash    int // counts down from 4 → 0; cursor shows red while > 0
+	tickCount     int
 }
 
 // New creates a typing model from a StartTypingMsg.
@@ -30,13 +34,14 @@ func New(msg msgs.StartTypingMsg, width, height int) Model {
 	colors := engine.SyntaxColors(msg.Snippet.Code, chromaLang)
 	state := engine.NewTypingState(msg.Snippet.Code, colors)
 	return Model{
-		state:   state,
-		snippet: msg.Snippet,
-		config:  msg.Config,
-		bestWPM: msg.BestWPM,
-		avgWPM:  msg.AvgWPM,
-		width:   width,
-		height:  height,
+		state:         state,
+		snippet:       msg.Snippet,
+		config:        msg.Config,
+		bestWPM:       msg.BestWPM,
+		avgWPM:        msg.AvgWPM,
+		width:         width,
+		height:        height,
+		cursorVisible: true,
 	}
 }
 
@@ -50,6 +55,15 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.width, m.height = msg.Width, msg.Height
 
 	case tickMsg:
+		m.tickCount++
+		// Blink cursor every 5 ticks (500ms)
+		if m.tickCount%5 == 0 {
+			m.cursorVisible = !m.cursorVisible
+		}
+		// Decay error flash
+		if m.errorFlash > 0 {
+			m.errorFlash--
+		}
 		if m.state.Finished {
 			return m, nil
 		}
@@ -72,10 +86,28 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if m.state.Finished {
 				return m, nil
 			}
+			prevErrors := m.state.Errors
+			prevCursor := m.state.Cursor
 			var done bool
 			m.state, done = engine.ProcessKey(m.state, msg)
 			if done {
+				isPersonalBest := m.bestWPM == 0 || m.state.WPM() > m.bestWPM
+				if isPersonalBest {
+					sound.PlayPersonalBest()
+				} else {
+					sound.PlayComplete()
+				}
 				return m, m.doneCmd()
+			}
+			if m.state.Cursor > prevCursor {
+				if m.state.Errors > prevErrors {
+					m.errorFlash = 4
+					sound.PlayError()
+				} else if msg.Type == tea.KeyEnter {
+					sound.PlayNewline()
+				} else {
+					sound.PlayCorrect()
+				}
 			}
 		}
 	}

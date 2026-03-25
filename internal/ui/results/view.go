@@ -8,6 +8,8 @@ import (
 	"github.com/IFAKA/coding-type/internal/theme"
 )
 
+var sparkles = []string{"✦", "✧", "·", "✦", "·", "✧", "·", "✦"}
+
 func (m Model) View() string {
 	d := m.done
 
@@ -15,16 +17,26 @@ func (m Model) View() string {
 	wpmValue := lipgloss.NewStyle().
 		Foreground(theme.Yellow).
 		Bold(true).
-		Render(fmt.Sprintf("%d", d.WPM))
+		Render(fmt.Sprintf("%d", m.displayWPM))
+
+	// Sparkle decoration once animation completes on a personal best
+	var wpmLine string
+	if m.animDone && d.IsPersonalBest {
+		sp := lipgloss.NewStyle().Foreground(theme.Yellow).Bold(true).
+			Render(sparkles[m.frame%len(sparkles)])
+		wpmLine = sp + " " + wpmValue + " " + sp + "  " + wpmLabel
+	} else {
+		wpmLine = wpmValue + "  " + wpmLabel
+	}
 
 	accLabel := theme.StatLabel.Render("accuracy")
 	accValue := lipgloss.NewStyle().
 		Foreground(theme.Green).
 		Bold(true).
-		Render(fmt.Sprintf("%.1f%%", d.Accuracy))
+		Render(fmt.Sprintf("%.1f%%", m.displayAcc))
 
 	wpmBlock := lipgloss.JoinVertical(lipgloss.Left,
-		wpmValue+"  "+wpmLabel,
+		wpmLine,
 		wpmSub(d.DiffFromAvg, d.IsPersonalBest),
 	)
 
@@ -106,4 +118,3 @@ func accSub(acc float64) string {
 		return lipgloss.NewStyle().Foreground(theme.Red).Render("  needs work")
 	}
 }
-

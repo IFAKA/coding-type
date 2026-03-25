@@ -12,7 +12,7 @@ import (
 
 func (m Model) View() string {
 	header := renderHeader(m)
-	code := renderCode(m.state)
+	code := renderCode(m)
 	statsBar := renderStats(m)
 	help := "  " + theme.HelpKey.Render("esc") + " " + theme.HelpDesc.Render("menu") +
 		"   " + theme.HelpKey.Render("ctrl+r") + " " + theme.HelpDesc.Render("restart")
@@ -45,10 +45,11 @@ func renderHeader(m Model) string {
 	return "  " + lang + dot + diff + dot + mode + dot + title + "\n"
 }
 
-func renderCode(s engine.TypingState) string {
+func renderCode(m Model) string {
+	s := m.state
 	var sb strings.Builder
 	for i, r := range s.Target {
-		style := charStyle(s, i)
+		style := charStyle(m, i)
 		if r == '\n' {
 			if i == s.Cursor {
 				sb.WriteString(style.Render("↵"))
@@ -61,9 +62,19 @@ func renderCode(s engine.TypingState) string {
 	return sb.String()
 }
 
-func charStyle(s engine.TypingState, i int) lipgloss.Style {
-	// Cursor position
+func charStyle(m Model, i int) lipgloss.Style {
+	s := m.state
 	if i == s.Cursor {
+		if !m.cursorVisible {
+			// Blink off: render as dim untyped so cursor position is still faintly visible
+			if i < len(s.SyntaxColors) {
+				return lipgloss.NewStyle().Foreground(s.SyntaxColors[i])
+			}
+			return theme.UntypedChar
+		}
+		if m.errorFlash > 0 {
+			return theme.CursorError
+		}
 		return theme.CursorChar
 	}
 
@@ -73,7 +84,6 @@ func charStyle(s engine.TypingState, i int) lipgloss.Style {
 	case engine.Incorrect:
 		return theme.IncorrectChar
 	default:
-		// Untyped: use dim syntax color
 		if i < len(s.SyntaxColors) {
 			return lipgloss.NewStyle().Foreground(s.SyntaxColors[i]).Faint(true)
 		}
@@ -94,7 +104,11 @@ func renderStats(m Model) string {
 			remaining = 0
 		}
 		secs := int(remaining.Seconds())
-		timerStr = fmt.Sprintf("%s", theme.StatValue.Render(fmt.Sprintf("%02d:%02d", secs/60, secs%60)))
+		timerStyle := theme.StatValue
+		if secs <= 10 {
+			timerStyle = lipgloss.NewStyle().Foreground(theme.Red).Bold(true)
+		}
+		timerStr = timerStyle.Render(fmt.Sprintf("%02d:%02d", secs/60, secs%60))
 	} else {
 		elapsed := s.ElapsedSeconds()
 		timerStr = theme.StatValue.Render(fmt.Sprintf("%02d:%02d", elapsed/60, elapsed%60))
@@ -118,4 +132,3 @@ func diffStyle(diff string) lipgloss.Style {
 		return theme.Muted
 	}
 }
-

@@ -110,6 +110,11 @@ var (
 			Background(Mauve).
 			Foreground(Base)
 
+	CursorError = lipgloss.NewStyle().
+			Background(Red).
+			Foreground(Base).
+			Bold(true)
+
 	UntypedChar = lipgloss.NewStyle().
 			Foreground(Overlay)
 

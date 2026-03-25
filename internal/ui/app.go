@@ -6,6 +6,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/IFAKA/coding-type/internal/history"
 	"github.com/IFAKA/coding-type/internal/snippets"
+	"github.com/IFAKA/coding-type/internal/sound"
 	"github.com/IFAKA/coding-type/internal/ui/menu"
 	"github.com/IFAKA/coding-type/internal/ui/msgs"
 	"github.com/IFAKA/coding-type/internal/ui/results"
@@ -26,6 +27,7 @@ type App struct {
 
 // New creates the root app model.
 func New() App {
+	go sound.Init()
 	return App{
 		screen: msgs.ScreenMenu,
 		menu:   menu.New(80, 24),

@@ -6,6 +6,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/IFAKA/coding-type/internal/history"
 	"github.com/IFAKA/coding-type/internal/snippets"
+	"github.com/IFAKA/coding-type/internal/sound"
 	"github.com/IFAKA/coding-type/internal/ui/msgs"
 )
 
@@ -53,15 +54,19 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case "tab", "down", "j":
 			m.activeRow = (m.activeRow + 1) % 3
+			go sound.PlayNavRow()
 
 		case "shift+tab", "up", "k":
 			m.activeRow = (m.activeRow + 2) % 3
+			go sound.PlayNavRow()
 
 		case "right", "l":
 			m.cycleRight()
+			go sound.PlayNavSelect()
 
 		case "left", "h":
 			m.cycleLeft()
+			go sound.PlayNavSelect()
 
 		case "enter", " ":
 			return m, m.startTyping()
